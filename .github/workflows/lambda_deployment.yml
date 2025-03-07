@@ -26,7 +26,8 @@ jobs:
       - name: Upload Trivy Results
         uses: actions/upload-artifact@v2
         run: |
-          echo "helloworld!"
+            curl -sfL https://github.com/aquasecurity/trivy/releases/download/v0.30.0/trivy_0.30.0_Linux-64bit.tar.gz | tar xz -C /usr/local/bin 
+
         #with:
            #name: trivy-scan-results
            #path: trivy_scan_results.json
