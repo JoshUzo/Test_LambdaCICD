@@ -41,7 +41,9 @@ jobs:
         run: pip install -r src/requirements.txt
 
       - name: Run Unit Tests
-        run: pytest tests/
+        run: |
+          export PYTHONPATH=src:$PYTHONPATH  # Add src to the Python path
+          pytest tests/
         
   deploy:
     runs-on: ubuntu-latest
