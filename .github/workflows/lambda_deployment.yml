@@ -23,7 +23,7 @@ jobs:
         run: |
           aws codeguru-reviewer create-code-review \
             --name LambdaCodeReview \
-            --type RepositoryAnalysis \
+            --type=RepositoryAnalysis \
             --repository-association-arn arn:aws:codeguru-reviewer:us-east-2:211125625532:association/8ea0af07-f446-4b8c-a194-5d82039208bd \
             
       - name: Wait for CodeGuru Analysis
