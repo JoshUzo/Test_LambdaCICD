@@ -1,40 +1,55 @@
-name: Deploy Lambda Function
+name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   test:
-    name: Code Review with AWS CodeGuru
+    name: Run Security and Unit Tests
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set Up AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2
+      # Run Trivy Security Scan
+      - name: Run Trivy Security Scan
+        uses: aquasecurity/trivy-action@master
         with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-2
+          scan-type: 'fs'  # Scans the repo for vulnerabilities
+          ignore-unfixed: true
+          format: 'table'
+          output: 'trivy-report.txt'
+          severity: 'CRITICAL,HIGH'
 
-      - name: Run CodeGuru Reviewer
+      # Upload Trivy Report
+      - name: Upload Trivy Scan Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-security-report
+          path: trivy-report.txt
+
+      # Stop Deployment if High or Critical vulnerabilities are found
+      - name: Fail on High-Severity Issues
         run: |
-          aws codeguru-reviewer create-code-review \
-            --name LambdaCodeReview \
-            --type RepositoryAnalysis \
-            --repository-association-arn arn:aws:codeguru-reviewer:us-east-2:211125625532:association/8ea0af07-f446-4b8c-a194-5d82039208bd \
-            
-      - name: Wait for CodeGuru Analysis
-        run: |
-          echo "Waiting for CodeGuru review..."
-          sleep 300  # Wait for analysis to complete (adjust as needed)
-      
-      - name: Fetch CodeGuru Results
-        run: |
-          aws codeguru-reviewer list-code-reviews --type RepositoryAnalysis --status Completed
-          
+          if grep -q "CRITICAL\|HIGH" trivy-report.txt; then
+            echo "Critical or High vulnerabilities found! Failing the job."
+            exit 1
+          fi
+
+      # Run Python Unit Tests
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: pytest tests/
+        
   deploy:
     runs-on: ubuntu-latest
     needs: test
