@@ -12,7 +12,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-
+      - name: Set up Trivy
+        run: |
+          curl -sfL https://github.com/aquasecurity/trivy/releases/download/v0.30.0/trivy_0.30.0_Linux-64bit.tar.gz | tar xz -C /usr/local/bin 
+      
       # Run Trivy Security Scan
       - name: Run Trivy Security Scan
         run: |
