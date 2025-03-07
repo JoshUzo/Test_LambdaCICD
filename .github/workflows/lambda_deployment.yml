@@ -23,12 +23,12 @@ jobs:
         run: |
           aws codeguru-reviewer create-code-review \
             --name LambdaCodeReview \
-            --repository-association-arn arn:aws:codeguru-reviewer:us-east-2:211125625532:association:8ea0af07-f446-4b8c-a194-5d82039208bd:code-review:RepositoryAnalysis-JoshUzo_CodepipelineAWS-Test-main-d2a1a165-861b-4638-ba7c-8340b5d62458
             --type RepositoryAnalysis \
+            --repository-association-arn arn:aws:codeguru-reviewer:us-east-2:211125625532:association/8ea0af07-f446-4b8c-a194-5d82039208bd \
             --source-code-type S3Bucket \
             --bucket-name code-guru-bucket-754 \
             --object-key source.zip
-
+            
       - name: Wait for CodeGuru Analysis
         run: |
           echo "Waiting for CodeGuru review..."
