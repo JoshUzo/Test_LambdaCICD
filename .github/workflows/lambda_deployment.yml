@@ -22,7 +22,13 @@ jobs:
           format: 'table'
           output: 'trivy-report.txt'
           severity: 'CRITICAL,HIGH'
-
+          
+      - name: Upload Trivy Results
+        uses: actions/upload-artifacts@v2
+        with:
+           name: trivy-scan-results
+           path: trivy-report.txt
+           
       # Stop Deployment if High or Critical vulnerabilities are found
       - name: Fail on High-Severity Issues
         run: |
