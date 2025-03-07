@@ -15,19 +15,15 @@ jobs:
 
       # Run Trivy Security Scan
       - name: Run Trivy Security Scan
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: 'fs'  # Scans the repo for vulnerabilities
-          ignore-unfixed: true
-          format: 'table'
-          output: 'trivy-report.txt'
-          severity: 'CRITICAL,HIGH'
+        run: |
+         trivy fs --format json --output trivy_scan_results.json .
+          
           
       - name: Upload Trivy Results
         uses: actions/upload-artifacts@v2
         with:
            name: trivy-scan-results
-           path: trivy-report.txt
+           path: trivy_scan_results.json
            
       # Stop Deployment if High or Critical vulnerabilities are found
       - name: Fail on High-Severity Issues
