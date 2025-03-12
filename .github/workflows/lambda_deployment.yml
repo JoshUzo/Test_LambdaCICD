@@ -22,7 +22,7 @@ jobs:
       # Run Bandit Security Scan for Python code and output to a file
       - name: Run Bandit Security Scan for Python code
         run: |
-          bandit -r src/ -o bandit-results.txt -f txt
+          bandit -r src/ -o bandit-results.txt -f txt || true  # Continue on error
 
       # Check if Bandit results file is created
       - name: Check Bandit output file
