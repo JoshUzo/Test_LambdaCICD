@@ -43,7 +43,7 @@ jobs:
       # Install JSONLint for JSON validation
       - name: Install JSONLint
         run: |
-          curl -sL https://github.com/zaach/jsonlint/releases/download/v1.6.3/jsonlint-1.6.3-linux-x86_64.tar.gz | tar xz -C /usr/local/bin
+          curl -LO https://github.com/zaach/jsonlint/releases/download/v1.6.3/jsonlint-1.6.3-linux-x86_64.tar.gz tar -xzvf jsonlint-1.6.3-linux-x86_64.tar.gz -C /usr/local/bin
 
       # Run JSONLint to validate DataBrew JSON files and output to a file
       - name: Validate DataBrew JSON files with JSONLint
