@@ -23,7 +23,12 @@ jobs:
       - name: Run Bandit Security Scan for Python code
         run: |
           bandit -r src/ -o bandit-results.txt -f txt
-          
+
+      # Check if Bandit results file is created
+      - name: Check Bandit output file
+        run: |
+          ls -l bandit-results.txt
+          cat bandit-results.txt          
       
       # Install Yamllint for YAML validation
       - name: Install Yamllint
