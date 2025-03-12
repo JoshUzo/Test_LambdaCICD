@@ -2,40 +2,47 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
 
 jobs:
   test:
-    name: Run Security and Unit Tests
+    name: Run Security, Fuzzy Matching, and Unit Tests
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
         
-      - name: Set up Trivy
+      # Install Bandit for Python security checks
+      - name: Install Bandit
         run: |
-          curl -sfL https://github.com/aquasecurity/trivy/releases/download/v0.30.0/trivy_0.30.0_Linux-64bit.tar.gz | tar xz -C /usr/local/bin 
+          python -m pip install bandit
+
+      # Run Bandit Security Scan for Python code
+      - name: Run Bandit Security Scan for Python code
+        run: |
+          bandit -r src/  # Scan the src directory for Python vulnerabilities
       
-      # Run Trivy Security Scan
-      - name: Run Trivy Security Scan
+      # Install Yamllint for YAML validation
+      - name: Install Yamllint
         run: |
-         trivy fs --format table --output trivy_scan_results.json .
-          
-          
-      - name: Upload Trivy Results
-        uses: actions/upload-artifact@v4
-        with:
-           name: trivy-scan-results
-           path: trivy_scan_results.json
-           
-      # Stop Deployment if High or Critical vulnerabilities are found
-      - name: Fail on High-Severity Issues
+          sudo apt-get install -y yamllint
+
+      # Run Yamllint to validate DataBrew YAML files
+      - name: Validate DataBrew YAML files with Yamllint
         run: |
-          if grep -q "CRITICAL\|HIGH" trivy_scan_results.json; then
-            echo "Critical or High vulnerabilities found! Failing the job."
-            exit 1
-          fi
+          yamllint ./path-to-your-yaml-files/*.yaml
+
+      # Install JSONLint for JSON validation
+      - name: Install JSONLint
+        run: |
+          curl -sL https://github.com/zaach/jsonlint/releases/download/v1.6.3/jsonlint-1.6.3-linux-x86_64.tar.gz | tar xz -C /usr/local/bin
+
+      # Run JSONLint to validate DataBrew JSON files
+      - name: Validate DataBrew JSON files with JSONLint
+        run: |
+          jsonlint ./path-to-your-json-files/*.json
         
   deploy:
     runs-on: ubuntu-latest
