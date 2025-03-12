@@ -20,7 +20,7 @@ jobs:
       # Run Trivy Security Scan
       - name: Run Trivy Security Scan
         run: |
-         trivy fs --format json --output trivy_scan_results.json .
+         trivy fs --format table --output trivy_scan_results.json .
           
           
       - name: Upload Trivy Results
@@ -32,7 +32,7 @@ jobs:
       # Stop Deployment if High or Critical vulnerabilities are found
       - name: Fail on High-Severity Issues
         run: |
-          if grep -q "CRITICAL\|HIGH" trivy-report.txt; then
+          if grep -q "CRITICAL\|HIGH" trivy_scan_results.json; then
             echo "Critical or High vulnerabilities found! Failing the job."
             exit 1
           fi
