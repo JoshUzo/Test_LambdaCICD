@@ -40,11 +40,17 @@ jobs:
         run: |
           yamllint ./path-to-your-yaml-files/*.yaml > yamllint-results.txt || true
 
-      # Install JSONLint for JSON validation
+      # Install npm (to install jsonlint)
+      - name: Install npm
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y npm
+
+      # Install jsonlint using npm
       - name: Install JSONLint
         run: |
-          curl -LO https://github.com/zaach/jsonlint/releases/download/v1.6.3/jsonlint-1.6.3-linux-x86_64.tar.gz && tar -xzvf jsonlint-1.6.3-linux-x86_64.tar.gz -C /usr/local/bin
-
+          sudo npm install -g jsonlint
+          
       # Run JSONLint to validate DataBrew JSON files and output to a file
       - name: Validate DataBrew JSON files with JSONLint
         run: |
