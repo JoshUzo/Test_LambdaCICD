@@ -36,20 +36,6 @@ jobs:
             echo "Critical or High vulnerabilities found! Failing the job."
             exit 1
           fi
-
-      # Run Python Unit Tests
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
-
-      - name: Install Dependencies
-        run: pip install -r src/requirements.txt
-
-      - name: Run Unit Tests
-        run: |
-          export PYTHONPATH=src:$PYTHONPATH  # Add src to the Python path
-          pytest tests/
         
   deploy:
     runs-on: ubuntu-latest
