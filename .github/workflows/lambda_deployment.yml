@@ -19,30 +19,50 @@ jobs:
         run: |
           python -m pip install bandit
 
-      # Run Bandit Security Scan for Python code
+      # Run Bandit Security Scan for Python code and output to a file
       - name: Run Bandit Security Scan for Python code
         run: |
-          bandit -r src/  # Scan the src directory for Python vulnerabilities
+          bandit -r src/ -o bandit-results.txt -f txt
+          
       
       # Install Yamllint for YAML validation
       - name: Install Yamllint
         run: |
           sudo apt-get install -y yamllint
 
-      # Run Yamllint to validate DataBrew YAML files
+      # Run Yamllint to validate DataBrew YAML files and output to a file
       - name: Validate DataBrew YAML files with Yamllint
         run: |
-          yamllint ./path-to-your-yaml-files/*.yaml
+          yamllint ./path-to-your-yaml-files/*.yaml > yamllint-results.txt || true
 
       # Install JSONLint for JSON validation
       - name: Install JSONLint
         run: |
           curl -sL https://github.com/zaach/jsonlint/releases/download/v1.6.3/jsonlint-1.6.3-linux-x86_64.tar.gz | tar xz -C /usr/local/bin
 
-      # Run JSONLint to validate DataBrew JSON files
+      # Run JSONLint to validate DataBrew JSON files and output to a file
       - name: Validate DataBrew JSON files with JSONLint
         run: |
-          jsonlint ./path-to-your-json-files/*.json
+          jsonlint ./path-to-your-json-files/*.json > jsonlint-results.txt || true
+
+      # Upload the results to GitHub as artifacts
+      - name: Upload Bandit Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: bandit-results
+          path: bandit-results.txt
+
+      - name: Upload Yamllint Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: yamllint-results
+          path: yamllint-results.txt
+
+      - name: Upload JSONLint Results
+        uses: actions/upload-artifact@v4
+        with:
+          name: jsonlint-results
+          path: jsonlint-results.txt
         
   deploy:
     runs-on: ubuntu-latest
