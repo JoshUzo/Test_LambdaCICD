@@ -22,13 +22,15 @@ jobs:
       # Run Bandit Security Scan for Python code and output to a file
       - name: Run Bandit Security Scan for Python code
         run: |
-          bandit -r src/ -o bandit-results.txt -f txt || true  # Continue on error
+          bandit -r src/ -o bandit-results.txt -f txt --serverity-level medium || true  # Continue on error
 
-      # Check if Bandit results file is created
-      - name: Check Bandit output file
+      # Check if Bandit output contains Medium or High severity issues
+      - name: Fail if Bandit finds issues
         run: |
-          ls -l bandit-results.txt
-          cat bandit-results.txt          
+          if grep -E "MEDIUM|HIGH" bandit-results.txt; then
+            echo "Medium or High severity issues found in Bandit scan!"
+            exit 1
+          fi          
       
       # Install Yamllint for YAML validation
       - name: Install Yamllint
@@ -40,6 +42,14 @@ jobs:
         run: |
           yamllint ./path-to-your-yaml-files/*.yaml > yamllint-results.txt || true
 
+      # Fail if Yamllint has errors (ignoring warnings)
+      - name: Fail if Yamllint finds critical errors
+        run: |
+          if grep -E "error" yamllint-results.txt; then
+            echo "Critical YAML issues found!"
+            exit 1
+          fi
+          
       # Install npm (to install jsonlint)
       - name: Install npm
         run: |
@@ -56,6 +66,14 @@ jobs:
         run: |
           jsonlint ./path-to-your-json-files/*.json > jsonlint-results.txt || true
 
+      # Fail if JSONLint detects errors
+      - name: Fail if JSONLint finds issues
+        run: |
+          if grep -E "Error" jsonlint-results.txt; then
+            echo "JSON format errors found!"
+            exit 1
+          fi
+          
       # Upload the results to GitHub as artifacts
       - name: Upload Bandit Results
         uses: actions/upload-artifact@v4
