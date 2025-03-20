@@ -22,12 +22,12 @@ jobs:
       # Run Bandit Security Scan for Python code and output to a file
       - name: Run Bandit Security Scan for Python code
         run: |
-          bandit -r src/ -o bandit-results.txt -f txt --severity-level medium || true  # Continue on error
+          bandit -r src/ -o bandit-results.txt -f txt --severity-level low || true  # Continue on error
 
       # Check if Bandit output contains Medium or High severity issues
       - name: Fail if Bandit finds issues
         run: |
-          if grep -E "MEDIUM|HIGH" bandit-results.txt; then
+          if grep -E "LOW|MEDIUM|HIGH" bandit-results.txt; then
             echo "Medium or High severity issues found in Bandit scan!"
             exit 1
           fi          
