@@ -92,6 +92,23 @@ jobs:
         with:
           name: jsonlint-results
           path: jsonlint-results.txt
+          
+      # Send email with findings
+      - name: Send Email with Reports
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com  # Replace with your email provider
+          server_port: 587
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "[CI/CD Report] Security & Validation Results"
+          body: "Please find the attached security reports from the latest GitHub Actions run."
+          to: "joshua.c.uzoma@example.com"
+          from: ${{ secrets.EMAIL_USERNAME }}
+          attachments: |
+            bandit-results.txt
+            yamllint-results.txt
+            jsonlint-results.txt
         
   deploy:
     runs-on: ubuntu-latest
