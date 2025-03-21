@@ -103,7 +103,7 @@ jobs:
           password: ${{ secrets.EMAIL_PASSWORD }}
           subject: "[CI/CD Report] Security & Validation Results"
           body: "Please find the attached security reports from the latest GitHub Actions run."
-          to: "joshua.c.uzoma@example.com"
+          to: "joshua.c.uzoma@gmail.com"
           from: ${{ secrets.EMAIL_USERNAME }}
           attachments: |
             bandit-results.txt
